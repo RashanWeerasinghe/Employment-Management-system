@@ -118,7 +118,9 @@ const Dashboard = () => {
                   <TableCell align="right">{row.emp_type}</TableCell>
                   <TableCell align="right">{row.experience}</TableCell>
                   <TableCell align="right">
-                    <Button>Edit</Button>
+                    <Button component={Link} to={`/EditPeople/${row.emp_id}`}>
+                      Edit
+                    </Button>
                     <Button
                       variant="outlined"
                       color="error"
