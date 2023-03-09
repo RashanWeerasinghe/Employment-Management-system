@@ -40,6 +40,15 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  const Delete = async (id) => {
+    await axios
+      .delete(`http://localhost:5000/employee/${id}`)
+      .then((res) => console.log(res))
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <div>
@@ -110,7 +119,11 @@ const Dashboard = () => {
                   <TableCell align="right">{row.experience}</TableCell>
                   <TableCell align="right">
                     <Button>Edit</Button>
-                    <Button variant="outlined" color="error">
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => Delete(row.emp_id)}
+                    >
                       Delete
                     </Button>
                   </TableCell>

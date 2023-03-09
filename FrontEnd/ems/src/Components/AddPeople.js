@@ -8,12 +8,13 @@ import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
+import axios from "axios";
+import dayjs, { Dayjs } from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 
@@ -22,15 +23,33 @@ const AddPeople = () => {
   const [name_with_initial, setName_with_initial] = useState("");
   const [display_name, setDisplay_name] = useState("");
   const [gender, setGender] = useState("");
-  const [dob, setDop] = useState("");
+  const [dob, setDop] = useState(dayjs("2022-04-17"));
+  const [db, setDp] = useState(dayjs("2022-04-17"));
   const [email, setEmail] = useState("");
   const [p_number, setP_number] = useState("");
   const [designation, setDesignation] = useState("");
   const [emp_type, setEmp_type] = useState("");
-  const [join_date, setJoin_date] = useState("");
+  const [join_date, setJoin_date] = useState(dayjs("2022-04-17"));
+  const [jn_date, setJn_date] = useState(dayjs("2022-04-17"));
   const [experience, setExperience] = useState("");
   const [salary, setSalary] = useState("");
   const [notes, setNotes] = useState("");
+
+  const emp = ["Full time", "Part time", "Contract Basis", "Other"];
+
+  const exp = [
+    "1 years",
+    " 2 years",
+    "3 years",
+    " 4 years",
+    " 5 years",
+    " 6 years",
+    "7 years",
+    "8 years",
+    " 9 years",
+    "10 years",
+    "11 years",
+  ];
 
   const onchange = (e) => {
     switch (e.target.id) {
@@ -46,9 +65,9 @@ const AddPeople = () => {
       case "gender":
         setGender(e.target.value);
         break;
-      case "dob":
-        setDop(e.target.value);
-        break;
+      // case "dob":
+      //   setDop(db);
+      //   break;
       case "email":
         setEmail(e.target.value);
         break;
@@ -58,12 +77,16 @@ const AddPeople = () => {
       case "designation":
         setDesignation(e.target.value);
         break;
-      case "emp_type":
-        setEmp_type(e.target.value);
-        break;
-      case "join_date":
-        setJoin_date(e.target.value);
-        break;
+      // case "emp_type":
+      //   setEmp_type(
+      //     typeof e.target.value === "string"
+      //       ? e.target.value.split(",")
+      //       : e.target.value
+      //   );
+      //   break;
+      // case "join_date":
+      //   setJoin_date(jn_date);
+      //   break;
       case "experience":
         setExperience(e.target.value);
         break;
@@ -75,6 +98,70 @@ const AddPeople = () => {
         break;
       default:
         break;
+    }
+  };
+
+  // const handleDate = (e) => {
+  //   if (e === "dob") {
+  //     setDop(db);
+  //   } else if (e === "join_date") {
+  //     setJoin_date(jn_date);
+  //   }
+  // };
+
+  const handleChangeEmpType = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setEmp_type(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const onchangeExperience = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setExperience(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const onchangeGender = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setGender(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const AddPeople = async () => {
+    if (full_name !== "" || name_with_initial !== "") {
+      await axios
+        .post("http://localhost:5000/employee/add", {
+          full_name: full_name,
+          name_with_initial: name_with_initial,
+          display_name: display_name,
+          gender: gender,
+          dob: dob,
+          email: email,
+          p_number: p_number,
+          designation: designation,
+          emp_type: emp_type,
+          join_date: join_date,
+          experience: experience,
+          salary: salary,
+          notes: notes,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    } else {
+      console.log("please fill");
     }
   };
 
@@ -157,7 +244,7 @@ const AddPeople = () => {
             label="gender"
             name="gender"
             value={gender}
-            // onChange={onchange}
+            onChange={onchangeGender}
           >
             <MenuItem value={"Male"}>Male</MenuItem>
             <MenuItem value={"Female"}>Female</MenuItem>
@@ -170,12 +257,46 @@ const AddPeople = () => {
                 label="Date of Birth"
                 id="dob"
                 value={dob}
-                onChange={onchange}
+                onChange={(res) => {
+                  let year = res.$y;
+                  let month = res.$M;
+                  let day = res.$D;
+                  const dtp = `${year}` + "-" + `${month}` + "-" + `${day}`;
+                  setDp(dtp);
+                  setDop(res);
+                  // handleDate("dob");
+                }}
+                defaultValue={dayjs("1997-04-17")}
                 sx={{ m: 1, width: "75ch" }}
               />
             </DemoContainer>
           </LocalizationProvider>
         </FormControl>
+
+        <FormControl
+          fullWidth
+          sx={{ m: 1, width: "75ch" }}
+          name="email"
+          value={email}
+          onChange={onchange}
+        >
+          <InputLabel htmlFor="outlined-adornment-amount">Email</InputLabel>
+          <OutlinedInput id="email" label="Designation" />
+        </FormControl>
+
+        <FormControl
+          fullWidth
+          sx={{ m: 1, width: "75ch" }}
+          name="p_number"
+          value={p_number}
+          onChange={onchange}
+        >
+          <InputLabel htmlFor="outlined-adornment-amount">
+            Mobile Number
+          </InputLabel>
+          <OutlinedInput id="p_number" label="Designation" />
+        </FormControl>
+
         <FormControl
           fullWidth
           sx={{ m: 1, width: "75ch" }}
@@ -195,12 +316,18 @@ const AddPeople = () => {
             id="emp_type"
             value={emp_type}
             label="Employee Type"
-            // onChange={onchange}
+            onChange={handleChangeEmpType}
           >
-            <MenuItem value={">Full time"}>Full time</MenuItem>
-            <MenuItem value={"Part time"}>Part time</MenuItem>
-            <MenuItem value={"Contract Basis"}>Contract Basis</MenuItem>
-            <MenuItem value={"Other"}>Other</MenuItem>
+            {/* <MenuItem value={10}>Full time</MenuItem>
+            <MenuItem value={20}>Part time</MenuItem>
+            <MenuItem value={30}>Contract Basis</MenuItem>
+            <MenuItem value={40}>Other</MenuItem> */}
+
+            {emp.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl>
@@ -210,7 +337,17 @@ const AddPeople = () => {
                 label="Joined Date"
                 id="join_date"
                 value={join_date}
-                onChange={onchange}
+                onChange={(res) => {
+                  let year = res.$y;
+                  let month = res.$M;
+                  let day = res.$D;
+                  const dt = `${year}` + "-" + `${month}` + "-" + `${day}`;
+                  setJn_date(dt);
+                  console.log(jn_date);
+                  setJoin_date(res);
+                  // handleDate("join_date");
+                }}
+                defaultValue={dayjs("2022-04-17")}
                 sx={{ m: 1, width: "75ch" }}
               />
             </DemoContainer>
@@ -223,9 +360,9 @@ const AddPeople = () => {
             id="experience"
             value={experience}
             label="Experience"
-            // onChange={onchange}
+            onChange={onchangeExperience}
           >
-            <MenuItem value={"1 years"}>1 years</MenuItem>
+            {/* <MenuItem value={"1 years"}>1 years</MenuItem>
             <MenuItem value={"2 years"}>2 years</MenuItem>
             <MenuItem value={"3 years"}>3 years</MenuItem>
             <MenuItem value={"4 years"}>4 years</MenuItem>
@@ -235,7 +372,13 @@ const AddPeople = () => {
             <MenuItem value={"8 years"}>8 years</MenuItem>
             <MenuItem value={"9 years"}>9 years</MenuItem>
             <MenuItem value={"10 years"}>10 years</MenuItem>
-            <MenuItem value={"11 years"}>11 years</MenuItem>
+            <MenuItem value={"11 years"}>11 years</MenuItem> */}
+
+            {exp.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl
@@ -274,7 +417,9 @@ const AddPeople = () => {
           <Button variant="outlined" component={Link} to={"/"}>
             Cancel
           </Button>
-          <Button variant="contained">Add People</Button>
+          <Button variant="contained" onClick={AddPeople}>
+            Add People
+          </Button>
         </Box>
       </div>
     </Box>
