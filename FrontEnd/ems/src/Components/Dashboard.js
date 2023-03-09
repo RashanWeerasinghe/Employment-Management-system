@@ -110,7 +110,9 @@ const Dashboard = () => {
                   <TableCell align="right">{row.experience}</TableCell>
                   <TableCell align="right">
                     <Button>Edit</Button>
-                    <Button>Delete</Button>
+                    <Button variant="outlined" color="error">
+                      Delete
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
