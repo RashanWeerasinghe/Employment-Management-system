@@ -4,7 +4,7 @@
 Go to API Floder
 --> open terminal
 --> command "npm install"
--->command "nodemon"
+-->command "node index.js"
 
 
 # How to Run FrontEnd
